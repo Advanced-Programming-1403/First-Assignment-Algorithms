@@ -1,3 +1,6 @@
+import java.util.ArrayList;
+import java.util.List;
+
 public class Exercises {
 
     /*
@@ -9,8 +12,17 @@ public class Exercises {
         note: you should return the indices in ascending order and every array's solution is unique
     */
     public int[] productIndices(int[] values, int target) {
-        // todo
-        return null;
+        for (int i = 0; i < values.length; i++) { // we need index so no for each
+            for (int j = i + 1; j < values.length; j++) {
+                if (values[i] * values[j] == target) {
+                    return new int[]{i, j};
+                }
+            }
+        }
+
+        //O9(n^2)
+
+        return new int[0]; //BUG
     }
 
     /*
@@ -25,8 +37,35 @@ public class Exercises {
         so you should walk in that matrix in a curl and then add the numbers in order you've seen them in a 1D array
     */
     public int[] spiralTraversal(int[][] values, int rows, int cols) {
-        // todo
-        return null;
+        if (values == null || rows == 0 || cols == 0) {
+            return new int[0];
+        }
+
+        int[] result = new int[rows * cols]; //result array
+        int index = 0; // pointer
+
+        int top = 0, bottom = rows - 1;
+        int left = 0, right = cols - 1;
+
+        while (top <= bottom && left <= right) {
+            for (int i = left; i <= right; i++) result[index++] = values[top][i];
+            top++;
+
+            for (int i = top; i <= bottom; i++) result[index++] = values[i][right];
+            right--;
+
+            if (top <= bottom) {
+                for (int i = right; i >= left; i--) result[index++] = values[bottom][i];
+                bottom--;
+            }
+
+            if (left <= right) {
+                for (int i = bottom; i >= top; i--) result[index++] = values[i][left];
+                left++;
+            }
+        }
+
+        return result;
     }
 
     /*
@@ -54,11 +93,37 @@ public class Exercises {
         if you're familiar with lists and arraylists, you can also edit method's body to use them instead of array
     */
     public int[][] intPartitions(int n) {
-        // todo
-        return null;
+        List<List<Integer>> partitions = new ArrayList<>();
+
+        generatePartitions(n, n, new ArrayList<>(), partitions); // Solve :V
+
+        // no changes in method's body :>
+        int[][] result = new int[partitions.size()][];
+        for (int i = 0; i < partitions.size(); i++) {
+            List<Integer> partition = partitions.get(i);
+            result[i] = new int[partition.size()];
+            for (int j = 0; j < partition.size(); j++) {
+                result[i][j] = partition.get(j);
+            }
+        }
+        return result;
+    }
+
+    private void generatePartitions(int target, int max, List<Integer> current, List<List<Integer>> partitions) {
+        if (target == 0) {
+            // valid partition :> finish
+            partitions.add(new ArrayList<>(current));
+            return;
+        }
+
+        for (int i = Math.min(max, target); i >= 1; i--) {
+            // Add the current number to the partition
+            current.add(i); // and number to partition
+            generatePartitions(target - i, i, current, partitions); //call again with remaining target & current max
+            current.removeLast();
+        }
     }
 
     public static void main(String[] args) {
-        // you can test your code here
     }
 }
