@@ -10,6 +10,13 @@ public class Exercises {
     */
     public int[] productIndices(int[] values, int target) {
         // todo
+        for (int i = 0; i < values.length; i++) {
+            for (int j = i + 1; j < values.length; j++) {
+                if (values[i] * values[j] == target) {
+                    return new int[]{i, j};
+                }
+            }
+        }
         return null;
     }
 
@@ -26,7 +33,27 @@ public class Exercises {
     */
     public int[] spiralTraversal(int[][] values, int rows, int cols) {
         // todo
-        return null;
+        int [] res = new int [rows*cols];
+        int top = 0, bottom = rows-1, left = 0, right = cols-1, index = 0;
+        while (top <= bottom && left <= right) {
+            for (int i = left; i <= right; i++) {
+             res[index++] = values[top][i];
+            }
+            top++;
+            for (int i = top; i <= bottom; i++) {
+                res[index++] = values[i][right];
+            }
+            right--;
+            for (int i = right; i >= left; i--) {
+                res[index++] = values[bottom][i];
+            }
+            bottom--;
+            for (int i = bottom; i >= top; i--) {
+                res[index++] = values[i][left];
+            }
+            left++;
+        }
+        return res;
     }
 
     /*
@@ -54,11 +81,45 @@ public class Exercises {
         if you're familiar with lists and arraylists, you can also edit method's body to use them instead of array
     */
     public int[][] intPartitions(int n) {
-        // todo
-        return null;
+        int count = countPartitions(n, n);
+        int[][] result = new int[count][n];
+        int[] buffer = new int[n];
+        fillPartitions(n, n, buffer, 0, result, new int[]{0});
+        return trimArray(result, count, n);
+    }
+
+    private int countPartitions(int n, int max) {
+        if (n == 0) return 1;
+        if (n < 0 || max == 0) return 0;
+        return countPartitions(n - max, max) + countPartitions(n, max - 1);
+    }
+
+    private void fillPartitions(int n, int max, int[] buffer, int index, int[][] result, int[] count) {
+        if (n == 0) {
+            System.arraycopy(buffer, 0, result[count[0]], 0, index);
+            count[0]++;
+            return;
+        }
+        for (int i = Math.min(n, max); i >= 1; i--) {
+            buffer[index] = i;
+            fillPartitions(n - i, i, buffer, index + 1, result, count);
+        }
+    }
+
+    private int[][] trimArray(int[][] result, int count, int n) {
+        int[][] finalResult = new int[count][];
+        for (int i = 0; i < count; i++) {
+            int length = 0;
+            while (length < n && result[i][length] != 0) {
+                length++;
+            }
+            finalResult[i] = new int[length];
+            System.arraycopy(result[i], 0, finalResult[i], 0, length);
+        }
+        return finalResult;
     }
 
     public static void main(String[] args) {
-        // you can test your code here
+
     }
 }
